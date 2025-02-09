@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Comentarios de la Publicación</title>
+</head>
+<body>
+    <h1>Comentarios de la Publicación</h1>
+    <ul>
+        <% post.comments.forEach(comment => { %>
+            <li><%= comment %></li>
+        <% }) %>
+    </ul>
+</body>
+</html>
