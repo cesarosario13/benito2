@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicaciones del Usuario</title>
+</head>
+<body>
+    <h1>Publicaciones de <%= user.name %></h1>
+    <ul>
+        <% user.posts.forEach(post => { %>
+            <li><%= post.title %> - <%= post.description %></li>
+        <% }) %>
+    </ul>
+</body>
+</html>
