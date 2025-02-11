@@ -7,8 +7,8 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 // Middleware para parsear el cuerpo de las solicitudes
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rutas
 const userRoutes = require('./routes/users');
