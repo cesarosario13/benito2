@@ -2,36 +2,36 @@ const express = require('express');
 const router = express.Router();
 const FriendshipController = require('../controllers/FriendshipController');
 
+// Obtener todas las amistades
+router.get('/', (req, res, next) => {
+    FriendshipController.getFriendships()
+        .then((friendships) => {
+            res.status(200).json(friendships); // Envía la lista de amistades como respuesta
+        })
+        .catch((error) => {
+            res.status(500).json({ message: error.message }); // Maneja el error
+        });
+});
 
-router.post('/', function (req, res, next) {
+// Agregar una nueva amistad
+router.post('/', (req, res, next) => {
     FriendshipController.addFriendship(req)
-        .then((nuevaAmistad) => {
-            res.status(201).send(nuevaAmistad); 
+        .then((newFriendship) => {
+            res.status(201).json(newFriendship); // Envía la nueva amistad como respuesta
         })
         .catch((error) => {
-            res.status(400).json({ message: error.message }); 
+            res.status(400).json({ message: error.message }); // Maneja el error
         });
 });
 
-
-router.delete('/:userId1/:userId2', function (req, res, next) {
-    FriendshipController.deleteFriendship(req)
-        .then(() => {
-            res.status(204).send(); 
-        })
-        .catch((error) => {
-            res.status(400).json({ message: error.message });
-        });
-});
-
-
-router.get('/:userId/feed', function (req, res, next) {
+// Obtener el feed de un usuario
+router.get('/:userId/feed', (req, res, next) => {
     FriendshipController.getFeed(req)
         .then((feed) => {
-            res.status(200).send(feed); 
+            res.status(200).json(feed); // Envía el feed como respuesta
         })
         .catch((error) => {
-            res.status(500).json({ message: error.message }); 
+            res.status(500).json({ message: error.message }); // Maneja el error
         });
 });
 

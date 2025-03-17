@@ -1,91 +1,86 @@
 class PostController {
     static posts = [];
 
+    static addPost(req) {
+        return new Promise((resolve, reject) => {
+            const { id, title, description, userId } = req.body;
 
-    static addPost(req, res) {
-        const { id, title, description, userId } = req.body;
-
-
-        if (!id || !title || !description || !userId) {
-            return res.status(400).json({ message: 'Faltan datos requeridos: id, titulo, descripcion, userId' });
-        }
-
-  
-        const newPost = { id, title, description, userId, comments: [] }; 
-        PostController.posts.push(newPost);
-
-
-        res.status(201).json(newPost);
+            if (!id || !title || !description || !userId) {
+                reject({ message: 'Faltan datos requeridos: id, titulo, descripcion, userId' });
+            } else {
+                const newPost = { id, title, description, userId, comments: [] };
+                PostController.posts.push(newPost);
+                resolve(newPost);
+            }
+        });
     }
 
-
-    static getPosts(req, res) {
-        res.json(PostController.posts);
+    static getPosts() {
+        return new Promise((resolve, reject) => {
+            resolve(PostController.posts);
+        });
     }
 
-    static editPost(req, res) {
-        const { id } = req.params; 
-        const { title, description } = req.body; 
+    static editPost(req) {
+        return new Promise((resolve, reject) => {
+            const { id } = req.params;
+            const { title, description } = req.body;
 
-
-        const post = PostController.posts.find(p => p.id === id);
-        if (!post) {
-            return res.status(404).json({ message: 'Publicación no encontrada' });
-        }
-
-
-        if (title) post.title = title;
-        if (description) post.description = description;
-
-        res.json(post); 
+            const post = PostController.posts.find(p => p.id === id);
+            if (!post) {
+                reject({ message: 'Publicación no encontrada' });
+            } else {
+                if (title) post.title = title;
+                if (description) post.description = description;
+                resolve(post);
+            }
+        });
     }
 
+    static deletePost(req) {
+        return new Promise((resolve, reject) => {
+            const { id } = req.params;
 
-    static deletePost(req, res) {
-        const { id } = req.params; 
-
-        const index = PostController.posts.findIndex(p => p.id === id);
-        if (index === -1) {
-            return res.status(404).json({ message: 'Publicación no encontrada' });
-        }
-
-        PostController.posts.splice(index, 1);
-
-        res.status(204).send(); 
+            const index = PostController.posts.findIndex(p => p.id === id);
+            if (index === -1) {
+                reject({ message: 'Publicación no encontrada' });
+            } else {
+                PostController.posts.splice(index, 1);
+                resolve();
+            }
+        });
     }
 
+    static addComment(req) {
+        return new Promise((resolve, reject) => {
+            const { id } = req.params;
+            const { comment } = req.body;
 
-    static addComment(req, res) {
-        const { id } = req.params; 
-        const { comment } = req.body; 
-
-        if (!comment) {
-            return res.status(400).json({ message: 'El comentario es requerido' });
-        }
-
-
-        const post = PostController.posts.find(p => p.id === id);
-        if (!post) {
-            return res.status(404).json({ message: 'Publicación no encontrada' });
-        }
-
-
-        post.comments.push(comment);
-
-        res.status(201).json(post);
+            if (!comment) {
+                reject({ message: 'El comentario es requerido' });
+            } else {
+                const post = PostController.posts.find(p => p.id === id);
+                if (!post) {
+                    reject({ message: 'Publicación no encontrada' });
+                } else {
+                    post.comments.push(comment);
+                    resolve(post);
+                }
+            }
+        });
     }
 
+    static getPostComments(req) {
+        return new Promise((resolve, reject) => {
+            const { id } = req.params;
 
-    static getPostComments(req, res) {
-        const { id } = req.params; 
-
-
-        const post = PostController.posts.find(p => p.id === id);
-        if (!post) {
-            return res.status(404).json({ message: 'Publicación no encontrada' });
-        }
-
-        res.json(post.comments);
+            const post = PostController.posts.find(p => p.id === id);
+            if (!post) {
+                reject({ message: 'Publicación no encontrada' });
+            } else {
+                resolve(post.comments);
+            }
+        });
     }
 }
 

@@ -1,60 +1,58 @@
-const PostController = require('./PostController'); 
+const PostController = require('./PostController');
 
 class FriendshipController {
     static friendships = []; 
 
-    static addFriendship(req, res) {
-        const { userId1, userId2 } = req.body;
-
-        if (!userId1 || !userId2) {
-            return res.status(400).json({ message: 'Faltan datos requeridos: userId1, userId2' });
-        }
-
-        const exists = FriendshipController.friendships.some(f => 
-            (f.userId1 === userId1 && f.userId2 === userId2) ||
-            (f.userId1 === userId2 && f.userId2 === userId1)
-        );
-
-        if (exists) {
-            return res.status(400).json({ message: 'La amistad ya existe' });
-        }
-
-        const newFriendship = { userId1, userId2 };
-        FriendshipController.friendships.push(newFriendship);
-
-        res.status(201).json({ message: 'Amistad agregada', friendship: newFriendship });
+    // Obtener todas las amistades
+    static getFriendships() {
+        return new Promise((resolve, reject) => {
+            resolve(FriendshipController.friendships); // Devuelve la lista de amistades
+        });
     }
 
-    static deleteFriendship(req, res) {
-        const { userId1, userId2 } = req.params;
+    // Agregar una nueva amistad
+    static addFriendship(req) {
+        return new Promise((resolve, reject) => {
+            const { userId1, userId2 } = req.body;
 
+            if (!userId1 || !userId2) {
+                reject({ message: 'Faltan datos requeridos: userId1, userId2' });
+            } else {
+                // Verificar si la amistad ya existe
+                const exists = FriendshipController.friendships.some(f => 
+                    (f.userId1 === userId1 && f.userId2 === userId2) ||
+                    (f.userId1 === userId2 && f.userId2 === userId1)
+                );
 
-        const initialLength = FriendshipController.friendships.length;
-        FriendshipController.friendships = FriendshipController.friendships.filter(f => 
-            !(f.userId1 === userId1 && f.userId2 === userId2) &&
-            !(f.userId1 === userId2 && f.userId2 === userId1)
-        );
-
-
-        if (FriendshipController.friendships.length === initialLength) {
-            return res.status(404).json({ message: 'Amistad no encontrada' });
-        }
-
-        res.status(204).send(); 
+                if (exists) {
+                    reject({ message: 'La amistad ya existe' });
+                } else {
+                    // Crear y guardar la nueva amistad
+                    const newFriendship = { userId1, userId2 };
+                    FriendshipController.friendships.push(newFriendship);
+                    resolve({ message: 'Amistad agregada', friendship: newFriendship });
+                }
+            }
+        });
     }
 
-    static getFeed(req, res) {
-        const { userId } = req.params;
+    // Obtener el feed de un usuario (posts de amigos)
+    static getFeed(req) {
+        return new Promise((resolve, reject) => {
+            const { userId } = req.params;
 
-        const friends = FriendshipController.friendships
-            .filter(f => f.userId1 === userId || f.userId2 === userId)
-            .map(f => f.userId1 === userId ? f.userId2 : f.userId1);
+            // Obtener la lista de amigos del usuario
+            const friends = FriendshipController.friendships
+                .filter(f => f.userId1 === userId || f.userId2 === userId)
+                .map(f => (f.userId1 === userId ? f.userId2 : f.userId1));
 
-        const feed = PostController.posts
-            .filter(p => friends.includes(p.userId)) 
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) 
+            // Obtener los posts de los amigos desde PostController
+            const feed = PostController.posts
+                .filter(p => friends.includes(p.userId)) // Filtrar posts de amigos
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Ordenar por fecha
 
-        res.json(feed); 
+            resolve(feed);
+        });
     }
 }
 
