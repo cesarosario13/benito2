@@ -87,6 +87,31 @@ class UserController {
                 reject(new Error('Error obteniendo usuarios: ' + error.message));
             }
         });
+        
+    }
+
+     
+     static getUserById(id) {
+        return new Promise((resolve, reject) => {
+            try {
+                const db = mongodb.getDb();
+                const usuariosCollection = db.collection('Usuarios');
+
+                usuariosCollection.findOne({ _id: new mongodb.ObjectId(id) }, (err, usuario) => {
+                    if (err) {
+                        console.error('Error al buscar usuario por ID:', err);
+                        reject(new Error('Error obteniendo usuario: ' + err.message));
+                    } else if (!usuario) {
+                        reject(new Error('Usuario no encontrado'));
+                    } else {
+                        resolve(usuario);
+                    }
+                });
+            } catch (error) {
+                console.error('Error en getUserById:', error);
+                reject(new Error('Error obteniendo usuario: ' + error.message));
+            }
+        });
     }
 }
 

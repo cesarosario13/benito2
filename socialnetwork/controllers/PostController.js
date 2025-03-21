@@ -5,19 +5,31 @@ class PostController {
         return new Promise((resolve, reject) => {
             const { id, title, description, userId } = req.body;
 
+            
             if (!id || !title || !description || !userId) {
                 reject({ message: 'Faltan datos requeridos: id, titulo, descripcion, userId' });
-            } else {
-                const newPost = { id, title, description, userId, comments: [] };
-                PostController.posts.push(newPost);
-                resolve(newPost);
+                return;
             }
-        });
-    }
 
-    static getPosts() {
-        return new Promise((resolve, reject) => {
-            resolve(PostController.posts);
+           
+            UserController.getUserById(userId)
+                .then((user) => {
+                   
+                    const newPost = {
+                        id,
+                        title,
+                        description,
+                        autor: { id: user.id, nombre: user.nombre }, 
+                        fechaCreacion: new Date(), 
+                        comments: []
+                    };
+
+                    PostController.posts.push(newPost);
+                    resolve(newPost);
+                })
+                .catch((error) => {
+                    reject({ message: 'Usuario no encontrado' });
+                });
         });
     }
 

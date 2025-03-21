@@ -34,6 +34,36 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+// Función para calcular el tiempo transcurrido
+function timeSince(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval >= 1) {
+        return `hace ${interval} año${interval > 1 ? 's' : ''}`;
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+        return `hace ${interval} mes${interval > 1 ? 'es' : ''}`;
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+        return `hace ${interval} día${interval > 1 ? 's' : ''}`;
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+        return `hace ${interval} hora${interval > 1 ? 's' : ''}`;
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+        return `hace ${interval} minuto${interval > 1 ? 's' : ''}`;
+    }
+    return `hace ${Math.floor(seconds)} segundo${seconds > 1 ? 's' : ''}`;
+}
+
+// Hacer la función disponible en las vistas
+app.locals.timeSince = timeSince;
+
 // Iniciar el servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

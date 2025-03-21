@@ -23,6 +23,15 @@ router.get('/', function (req, res, next) {
         });
 });
 
+router.get('/:id', function (req, res, next) {
+    PostController.getPostById(req.params.id)
+        .then((post) => {
+            res.status(200).render('postTime', { post }); // 
+        })
+        .catch((error) => {
+            res.status(500).json({ message: error.message });
+        });
+});
 
 router.put('/:id', function (req, res, next) {
     PostController.editPost(req)
@@ -63,7 +72,7 @@ router.get('/:id/comments', function (req, res, next) {
             res.status(200).json(comentarios); 
         })
         .catch((error) => {
-            res.status(500).json({ message: error.message }); // Maneja el error
+            res.status(500).json({ message: error.message });
         });
 });
 
