@@ -1,6 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const mongodb = require('./config/mongodb');
+
+// Conexión a la base de datos
+mongodb.connect()
+    .then(() => {
+        console.log('Base de datos conectada');
+    })
+    .catch((err) => {
+        console.error('Error conectando a la base de datos:', err);
+    });
 
 // Configuración de EJS como motor de plantillas
 app.set('view engine', 'ejs');
