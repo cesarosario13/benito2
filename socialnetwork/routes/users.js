@@ -2,7 +2,15 @@ const express = require('express');
 const router = express.Router(); 
 const UserController = require('../controllers/UserController'); 
  
- 
+router.get('/:id/activity', async (req, res) => {
+    try {
+        const user = await UserController.getUserById(req.params.id);
+        res.render('userActivity', { user });
+    } catch (error) {
+        res.status(500).json({ error: true, message: error.message });
+    }
+}); 
+
 router.get('/', function (req, res, next) { 
     UserController.getUsers() 
         .then((usuarios) => { 
