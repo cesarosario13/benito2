@@ -22,11 +22,47 @@
     <div class="time-management">
         <h2>Gestión de Tiempo</h2>
         <p>Aquí puedes agregar tus actividades y compartit tu día.</p>
-        <!-- Aquí puedes agregar un calendario, lista de tareas, etc. -->
+
         <div class="create-task">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
             <button><i class="ti ti-circle-plus-filled"></i> Agregar </button>
+            <form action="/posts" method="POST">
+                <input type="text" name="title" placeholder="Título de la actividad" required>
+                <textarea name="description" placeholder="Descripción de la actividad" required></textarea>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+        </form>
+        <div id="confirmationMessage" style="display: none; color: green; margin-top: 10px;">
+            ¡Actividad enviada correctamente!
+        </div>
             </div>
+            <script>
+                document.getElementById('activityForm').addEventListener('submit', function(event) {
+                    event.preventDefault(); // Evitar el envío tradicional del formulario
+            
+                    // Enviar el formulario usando Fetch API
+                    fetch('/posts', {
+                        method: 'POST',
+                        body: new FormData(this),
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Mostrar mensaje de confirmación
+                            document.getElementById('confirmationMessage').style.display = 'block';
+                            // Limpiar el formulario
+                            document.getElementById('activityForm').reset();
+                            // Ocultar el mensaje después de 3 segundos
+                            setTimeout(() => {
+                                document.getElementById('confirmationMessage').style.display = 'none';
+                            }, 3000);
+                        } else {
+                            alert('Error al enviar la actividad');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al enviar la actividad');
+                    });
+                });
+            </script>
     </div>
 
 

@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const PostController = require('../controllers/PostController');
 
+router.get('/publicaciones', (req, res) => {
+    res.redirect('/'); // Redirige a la página principal
+});
+
 router.post('/', function (req, res, next) {
     PostController.addPost(req)
         .then((nuevoPost) => {
@@ -74,6 +78,30 @@ router.get('/:id/comments', function (req, res, next) {
         .catch((error) => {
             res.status(500).json({ message: error.message });
         });
+});
+
+// Ruta para manejar el envío del formulario
+router.post('/', async (req, res) => {
+    try {
+        const db = getDb();
+        const publicacionesCollection = db.collection('Publicaciones');
+
+        // Crear la nueva publicación
+        const nuevaPublicacion = {
+            title: req.body.title,
+            description: req.body.description,
+            createdAt: new Date(), // Guardar la hora de creación
+        };
+
+        // Insertar la publicación en la colección
+        await publicacionesCollection.insertOne(nuevaPublicacion);
+
+        // Redirigir a la página principal después de guardar
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error al guardar la publicación:', error);
+        res.status(500).render('error', { message: 'Error al guardar la publicación' });
+    }
 });
 
 module.exports = router;

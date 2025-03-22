@@ -193,3 +193,196 @@ footer p {
   width: 50px; 
   height: 50px; 
 }
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #262626;
+  margin-top: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: #262626;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón de crear nuevo usuario */
+.create-button {
+  background-color: #262626;
+  cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  color : #fff;
+  font-size: 16px;
+  font-weight: bold;
+  position: relative;
+  border-radius: 12px;
+}
+
+.create-button:hover::before {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+z-index: -1;
+width: 100%;
+height: 100%;
+background: linear-gradient(
+  45deg,
+  red, blue, deeppink, blue,
+  red, blue, deeppink, blue
+  );
+  background-size: 800%;
+  border-radius: 10px;
+  filter: blur(8px);
+  animation: glowing 20s linear infinite;
+}
+
+@keyframes glowing {
+  0% { 
+    background-position: 0 0; 
+  }
+
+  50% { 
+    background-position: 400% 0; 
+  }
+  100% { 
+    background-position: 0 0; 
+  }
+}
+
+/* Lista de usuarios */
+.user-list {
+  list-style: none;
+  padding: 0;
+}
+
+.user-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.user-item:hover {
+  background-color: #f1f1f1;
+}
+
+.user-item p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.user-item strong {
+  color: #262626;
+}
+
+/* Botones de acciones */
+.actions {
+  margin-top: 10px;
+}
+
+.actions a, .actions button {
+  display: inline-block;
+  padding: 8px 12px;
+  margin-right: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.actions a {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+}
+
+.actions a:hover {
+  background-color: #218838;
+}
+
+.actions button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.actions button:hover {
+  background-color: #c82333;
+}
+
+/* Mensaje cuando no hay usuarios */
+.no-users {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+.create-task {
+  margin-top: 20px;
+}
+
+.create-task form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.create-task input,
+.create-task textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.publicaciones-header {
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.publicaciones-header ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.publicaciones-header li {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.publicaciones-header small {
+    color: #6c757d;
+    font-size: 12px;
+}

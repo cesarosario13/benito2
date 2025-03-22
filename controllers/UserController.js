@@ -88,6 +88,79 @@ class UserController {
             throw new Error('Error obteniendo usuario: ' + error.message);
         }
     }    
+        
+    static async getUsers() {
+    try {
+        const db = getDb();
+        const usuariosCollection = db.collection('Usuarios');
+        const usuarios = await usuariosCollection.find().toArray();
+        return usuarios;
+    } catch (error) {
+        throw new Error('Error obteniendo usuarios: ' + error.message);
+    }
+}
+static async getUserById(id) {
+    try {
+        const db = getDb();
+        const usuariosCollection = db.collection('Usuarios');
+        const usuario = await usuariosCollection.findOne({ _id: new ObjectId(id) });
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+        return usuario;
+    } catch (error) {
+        throw new Error('Error obteniendo usuario: ' + error.message);
+    }
+}
+static async addUser(userData) {
+    try {
+        const db = getDb();
+        const usuariosCollection = db.collection('Usuarios');
+
+        // Validar campos obligatorios
+        if (!userData.nombre || !userData.email) {
+            throw new Error('Los campos "nombre" y "email" son obligatorios');
+        }
+
+        const newUser = {
+            ...userData,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        const result = await usuariosCollection.insertOne(newUser);
+        return { ...newUser, _id: result.insertedId };
+    } catch (error) {
+        throw new Error('Error agregando usuario: ' + error.message);
+    }
+}
+static async updateUser(id, userData) {
+    try {
+        const db = getDb();
+        const usuariosCollection = db.collection('Usuarios');
+
+        const updatedUser = {
+            ...userData,
+            updatedAt: new Date(),
+        };
+
+        await usuariosCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updatedUser }
+        );
+    } catch (error) {
+        throw new Error('Error actualizando usuario: ' + error.message);
+    }
+}
+static async deleteUser(id) {
+    try {
+        const db = getDb();
+        const usuariosCollection = db.collection('Usuarios');
+        await usuariosCollection.deleteOne({ _id: new ObjectId(id) });
+    } catch (error) {
+        throw new Error('Error eliminando usuario: ' + error.message);
+    }
+}
 }
 
 module.exports = UserController;

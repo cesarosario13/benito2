@@ -60,6 +60,18 @@ function timeSince(date) {
     return `hace ${Math.floor(seconds)} segundo${seconds > 1 ? 's' : ''}`;
 }
 
+app.get('/', async (req, res) => {
+    try {
+        const db = getDb();
+        const publicacionesCollection = db.collection('Publicaciones');
+        const publicaciones = await publicacionesCollection.find().sort({ createdAt: -1 }).toArray(); // Obtener publicaciones ordenadas por fecha
+        res.render('index', { publicaciones }); // Pasar las publicaciones a la vista
+    } catch (error) {
+        console.error('Error al obtener las publicaciones:', error);
+        res.status(500).render('error', { message: 'Error al obtener las publicaciones' });
+    }
+});
+
 app.use(express.static("public"));
 
 // Hacer la función disponible en las vistas
