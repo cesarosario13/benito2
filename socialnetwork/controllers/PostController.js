@@ -1,6 +1,16 @@
 class PostController {
     static posts = [];
 
+    static getPosts() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(PostController.posts); // Devuelve todas las publicaciones
+            } catch (error) {
+                reject({ message: 'Error obteniendo publicaciones: ' + error.message });
+            }
+        });
+    }
+    
     static addPost(req) {
         return new Promise((resolve, reject) => {
             const { id, title, description, userId } = req.body;
