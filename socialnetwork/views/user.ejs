@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicaciones del Usuario</title>
+</head>
+<body>
+    <h1>Publicaciones de <%= user.name %></h1>
+    <ul>
+        <% user.posts.forEach(post => { %>
+            <li><%= post.title %> - <%= post.description %></li>
+        <% }) %>
+    </ul>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicaciones del Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        li p {
+            margin: 5px 0;
+        }
+        .no-posts {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Publicaciones de <%= user.nombre %></h1>
+    <% if (user.posts.length > 0) { %>
+        <ul>
+            <% user.posts.forEach(post => { %>
+                <li>
+                    <p><strong><%= post.title %></strong></p>
+                    <p><%= post.description %></p>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p class="no-posts">Este usuario no tiene publicaciones.</p>
+    <% } %>
+</body>
+</html>
