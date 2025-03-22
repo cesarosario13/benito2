@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        li p {
+            margin: 5px 0;
+        }
+        .no-users {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Usuarios</h1>
+    <% if (usuarios.length > 0) { %>
+        <ul>
+            <% usuarios.forEach(usuario => { %>
+                <li>
+                    <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
+                    <p><strong>Email:</strong> <%= usuario.email %></p>
+                    <p><strong>Teléfono:</strong> <%= usuario.telefono || 'No proporcionado' %></p>
+                    <p><strong>Dirección:</strong> <%= usuario.direccion || 'No proporcionada' %></p>
+                    <p><strong>Categoría:</strong> <%= usuario.categoria %></p>
+                    <p><strong>Proyecto:</strong> <%= usuario.proyecto || 'No asignado' %></p>
+                    <a href="/users/<%= usuario._id %>/activity">Ver actividad</a>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p class="no-users">No hay usuarios registrados.</p>
+    <% } %>
+</body>
+</html>

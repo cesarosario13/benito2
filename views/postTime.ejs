@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hace cuánto tiempo se creó la publicación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            padding: 20px;
+        }
+        .post {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .post h2 {
+            margin-top: 0;
+        }
+        .post p {
+            margin: 10px 0;
+        }
+        .time {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Publicación</h1>
+    <div class="post">
+        <h2>Publicación de <%= post.autor.nombre %></h2>
+        <p><%= post.description %></p>
+        <p class="time">Creada hace: <%= timeSince(post.fechaCreacion) %></p>
+    </div>
+</body>
+</html>
