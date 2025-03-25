@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const PostController = require('../controllers/PostController');
+const authenticate = require('../middlewares/auth');
+
+router.post('/', authenticate, PostController.addPost);
+router.put('/:id', authenticate, PostController.editPost);
+router.delete('/:id', authenticate, PostController.deletePost);
+
+router.get('/', PostController.getPosts); 
+router.get('/:id/comments', PostController.getPostComments);
 
 router.get('/publicaciones', (req, res) => {
     res.redirect('/'); // Redirige a la página principal

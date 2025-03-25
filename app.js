@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const { connectToMongoDB } = require('./config/mongodb');
+const cookieParser = require('cookie-parser');
 
 // Conectar a MongoDB antes de definir las rutas
 connectToMongoDB()
@@ -17,16 +18,24 @@ app.set('views', './views');
 // Middleware para parsear el cuerpo de las solicitudes
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.static('public'));
 
 
 // Rutas
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
 const friendshipRoutes = require('./routes/friendships');
+const authRoutes = require('./routes/authRoutes');
+const postRoutes = require('./routes/postRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/friendships', friendshipRoutes);
+app.use('/auth', authRoutes);
+app.use('/posts', postRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {
