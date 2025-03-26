@@ -1,33 +1,43 @@
-const mongoose = require('mongoose');
+const { getDB } = require('../config/mongodb');
 const bcrypt = require('bcryptjs');
+const { ObjectId } = require('mongodb');
 
-const userSchema = new mongoose.Schema({
-    email: { 
-        type: String, 
-        required: true, 
-        unique: true 
-    },
-    password: { 
-        type: String, 
-        required: true 
-    },
-    username: String,
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
+class User {
+    static collection() {
+        return getDB().collection('Usuarios'); 
     }
-});
 
-// Hashea la contraseña antes de guardar
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-});
+    static async create({ email, password, username }) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = {
+            email,
+            username,
+            password: hashedPassword,
+            createdAt: new Date()
+        };
+        
+        const result = await this.collection().insertOne(newUser);
+        return {
+            _id: result.insertedId,
+            ...newUser
+        };
+    }
 
-// Método para comparar contraseñas
-userSchema.methods.comparePassword = async function(candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
-};
+    static async findByEmail(email) {
+        return await this.collection().findOne({ 
+            email: { $regex: new RegExp(`^${email}$`, 'i') } 
+        });
+    }
 
-module.exports = mongoose.model('User', userSchema);
+    static async comparePassword(candidatePassword, hashedPassword) {
+        return await bcrypt.compare(candidatePassword, hashedPassword);
+    }
+
+    static async findById(id) {
+        return await this.collection().findOne({ 
+            _id: new ObjectId(id) 
+        });
+    }
+}
+
+module.exports = User;

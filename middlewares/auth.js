@@ -1,21 +1,22 @@
 const { verifyToken } = require('../utils/jwt');
 
-const token = req.headers.authorization?.split(' ')[1]; // Elimina la parte de cookies
-
 const authenticate = (req, res, next) => {
-    // Busca el token en cookies o headers
-    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).json({ error: 'Acceso no autorizado. Token requerido' });
-    }
-
     try {
+        const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+        
+        if (!token) {
+            return res.status(401).json({ error: 'Acceso no autorizado' });
+        }
+
         const decoded = verifyToken(token);
-        req.user = decoded;  // Guarda los datos del usuario en el request
+        req.user = decoded;
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Token inválido o expirado' });
+        console.error('Error en autenticación:', error);
+        res.status(401).json({ 
+            error: 'Token inválido',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 

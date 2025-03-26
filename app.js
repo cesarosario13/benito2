@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const { connectToMongoDB } = require('./config/mongodb');
+const { connectToMongoDB, getDb } = require('./config/mongodb');
 const cookieParser = require('cookie-parser');
 
 // Conectar a MongoDB antes de definir las rutas
@@ -9,6 +9,9 @@ connectToMongoDB()
     .then(() => {
         console.log('Base de datos conectada');
     })
+    .catch(err => {
+        console.error('Error al conectar a MongoDB:', err);
+    });
 
 
 // Configuración de EJS como motor de plantillas
@@ -27,19 +30,19 @@ const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
 const friendshipRoutes = require('./routes/friendships');
 const authRoutes = require('./routes/authRoutes');
-const postRoutes = require('./routes/postRoutes');
-const userRoutes = require('./routes/userRoutes');
-
 
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/friendships', friendshipRoutes);
 app.use('/auth', authRoutes);
-app.use('/posts', postRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.render('index');
+    res.redirect('/auth/login');
+});
+
+app.get('/auth/login', (req, res) => {
+    res.render('login'); 
 });
 
 // Función para calcular el tiempo transcurrido

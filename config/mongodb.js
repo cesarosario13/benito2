@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { MongoClient, ObjectId } = require('mongodb');
 
 const uri = "mongodb://localhost:27017/TiempoGestor";
@@ -6,7 +7,7 @@ let db;
 
 async function connectToMongoDB() {
     try {
-        client = new MongoClient(uri);
+        client = new MongoClient(process.env.MONGODB_URI);
         await client.connect();
         db = client.db("TiempoGestor");
         console.log('Conectado a MongoDB');
