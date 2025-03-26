@@ -1,26 +1,29 @@
-const { getDB } = require('../config/mongodb');
+const { getDb } = require('../config/mongodb');
 const bcrypt = require('bcryptjs');
 const { ObjectId } = require('mongodb');
 
 class User {
     static collection() {
-        return getDB().collection('Usuarios'); 
+        return getDb().collection('Usuarios'); 
     }
 
     static async create({ email, password, username }) {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = {
+        const result = await this.collection().insertOne({
             email,
             username,
             password: hashedPassword,
-            createdAt: new Date()
-        };
-        
-        const result = await this.collection().insertOne(newUser);
-        return {
-            _id: result.insertedId,
-            ...newUser
-        };
+            createdAt: new Date(),
+            role: 'user'
+        });
+        return result.insertedId;
+    }
+
+    static async makeAdmin(userId) {
+        await this.collection().updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { role: 'admin' } }
+        );
     }
 
     static async findByEmail(email) {

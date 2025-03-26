@@ -1,16 +1,17 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-const generateToken = (user) => {
-    return jwt.sign(
-        { id: user._id, email: user.email },  
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
-};
+function generateToken(user) {
+    if (!user || !user.id || !user.email) {
+        throw new Error('Datos de usuario incompletos para generar token');
+    }
 
-const verifyToken = (token) => {
-    return jwt.verify(token, process.env.JWT_SECRET);
-};
+    const payload = {
+        sub: user.id,
+        email: user.email,
+        role: user.role || 'user'
+    };
 
-module.exports = { generateToken, verifyToken };
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+}
+
+module.exports = { generateToken };

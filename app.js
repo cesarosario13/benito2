@@ -11,6 +11,7 @@ connectToMongoDB()
     })
     .catch(err => {
         console.error('Error al conectar a MongoDB:', err);
+        process.exit(1);
     });
 
 
@@ -31,14 +32,29 @@ const postRoutes = require('./routes/post');
 const friendshipRoutes = require('./routes/friendships');
 const authRoutes = require('./routes/authRoutes');
 
-app.use('/users', userRoutes);
-app.use('/posts', postRoutes);
-app.use('/friendships', friendshipRoutes);
+app.use('/users', (req, res, next) => {
+    if (!req.cookies.token) return res.redirect('/auth/login');
+    next();
+}, userRoutes);
+
+app.use('/posts', (req, res, next) => {
+    if (!req.cookies.token) return res.redirect('/auth/login');
+    next();
+}, postRoutes);
+
+app.use('/friendships', (req, res, next) => {
+    if (!req.cookies.token) return res.redirect('/auth/login');
+    next();
+}, friendshipRoutes);
+
 app.use('/auth', authRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.redirect('/auth/login');
+    if (!req.cookies.token) {
+        return res.redirect('/auth/login');
+    }
+    res.redirect('/index');
 });
 
 app.get('/auth/login', (req, res) => {
@@ -72,15 +88,25 @@ function timeSince(date) {
     return `hace ${Math.floor(seconds)} segundo${seconds > 1 ? 's' : ''}`;
 }
 
-app.get('/', async (req, res) => {
+app.get('/index', async (req, res) => {
+    if (!req.cookies.token) {
+        return res.redirect('/auth/login');
+    }
+    
     try {
         const db = getDb();
-        const publicacionesCollection = db.collection('Publicaciones');
-        const publicaciones = await publicacionesCollection.find().sort({ createdAt: -1 }).toArray(); // Obtener publicaciones ordenadas por fecha
-        res.render('index', { publicaciones }); // Pasar las publicaciones a la vista
+        const publicaciones = await db.collection('Publicaciones')
+            .find()
+            .sort({ createdAt: -1 })
+            .toArray();
+            
+        res.render('index', { 
+            publicaciones,
+            user: req.user // Pasa el usuario a la vista
+        });
     } catch (error) {
-        console.error('Error al obtener las publicaciones:', error);
-        res.status(500).render('error', { message: 'Error al obtener las publicaciones' });
+        console.error('Error:', error);
+        res.status(500).render('error', { message: 'Error al cargar publicaciones' });
     }
 });
 

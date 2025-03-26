@@ -4,29 +4,33 @@ const { generateToken } = require('../utils/jwt');
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        
         const user = await User.findByEmail(email);
         
         if (!user || !(await User.comparePassword(password, user.password))) {
-            return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+            return res.render('auth/login', { 
+                error: 'Email o contraseña incorrectos',
+                email // Mantenemos el email ingresado
+            });
         }
 
         const token = generateToken({
             id: user._id,
-            email: user.email
+            email: user.email,
+            role: user.role
         });
 
-        res.json({ 
-            token,
-            user: { 
-                id: user._id, 
-                email: user.email
-            } 
-        });
+        // Configurar cookie y redirigir
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production'
+        }).redirect('/'); // Redirige al index después de login
 
     } catch (error) {
         console.error('Error en login:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+        res.render('auth/login', { 
+            error: 'Error en el servidor',
+            email: req.body.email
+        });
     }
 };
 
@@ -35,37 +39,39 @@ exports.register = async (req, res) => {
         const { email, password, username } = req.body;
         
         if (!email || !password) {
-            return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+            return res.status(400).render('auth/register', {
+                error: 'Email y contraseña son requeridos',
+                formData: { email, username }
+            });
         }
 
         const existingUser = await User.findByEmail(email);
         if (existingUser) {
-            return res.status(400).json({ error: 'El email ya está registrado' });
+            return res.status(400).render('auth/register', {
+                error: 'El email ya está registrado',
+                formData: { email, username }
+            });
         }
 
-        const newUser = await User.create({ email, password, username });
+        const userId = await User.create({ email, password, username });
+        const token = generateToken({ id: userId, email });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 86400000 // 1 día
+        }).redirect('/');
         
-        const token = generateToken({
-            id: newUser._id,
-            email: newUser.email
-        });
-
-        res.status(201).json({
-            token,
-            user: {
-                id: newUser._id,
-                email: newUser.email,
-                username: newUser.username
-            }
-        });
-
     } catch (error) {
         console.error('Error en registro:', error);
-        
-        if (error.code === 11000) {
-            return res.status(400).json({ error: 'El email ya está registrado' });
-        }
-        
-        res.status(500).json({ error: 'Error en el servidor' });
+        res.status(500).render('auth/register', {
+            error: 'Error en el servidor',
+            formData: req.body
+        });
     }
+};
+
+// Cerrar sesión
+exports.logout = (req, res) => {
+    res.clearCookie('token').redirect('/auth/login');
 };

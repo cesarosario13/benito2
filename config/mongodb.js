@@ -1,5 +1,5 @@
+const { MongoClient } = require('mongodb');
 require('dotenv').config();
-const { MongoClient, ObjectId } = require('mongodb');
 
 const uri = "mongodb://localhost:27017/TiempoGestor";
 let client;
@@ -24,4 +24,4 @@ function getDb() {
     return db;
 }
 
-module.exports = { connectToMongoDB, getDb, ObjectId };
+module.exports = { connectToMongoDB, getDb};
